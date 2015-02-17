@@ -1,4 +1,9 @@
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Game {
@@ -6,10 +11,12 @@ public class Game {
 	String input;
 	Deck deck;
 	ArrayList<Hand> hands;
-	Hand player = new Hand(true, "Simar");
+	Hand player = new Hand(false, "Simar");
+	int winner = -1;
+	ArrayList<Card> thrown= new ArrayList<Card>();
 	
 	public Game(){
-		System.out.println("Press Enter to deal the cards..");
+		System.out.println("Press Enter to deal the cards and start");
 	    input = sc.nextLine();
 	    while(true) {
 	    	if(input.equals("")){
@@ -17,14 +24,17 @@ public class Game {
 	    		hands = new ArrayList<Hand>();
 	    		hands.add(new Hand(true, "Computer"));
 	    		hands.add(player);
-	    		deck.printAll();
+//	    		deck.printAll();
 	    		deck.shuffle();
-	    		deck.printAll();
+//	    		deck.printAll();
 	    		
-	    		showHands();
+//	    		showHands();
 	    		handOutCards();
-	    		showHands();
-	    		deck.printAll();
+//	    		showHands();
+//	    		player.askToMove();
+//	    		deck.printAll();
+	    		Random rnd = new Random();
+	    		start(rnd.nextInt(hands.size()));
 	    	    break;
 	    	}
 	    	else
@@ -56,5 +66,54 @@ public class Game {
 				hands.get(i).printAll();
 		}
 	}
+	
+	public void showThrown(){
+		System.out.print("Thrown: ");
+		if(thrown.size()==0)
+			System.out.print("<Nothing>");
+		for(int i=0; i<thrown.size(); i++){
+			System.out.print(thrown.get(i).toString());
+			if(i!=thrown.size()-1)
+				System.out.print(", ");
+		}
+		System.out.println();
+	}
+	
+	public void start(int startingHand){
+		showThrown();
+		int handIndex = startingHand;
+		while(winner==-1){
+			boolean isBurn = false;
+			Hand currentHand = hands.get(handIndex);
+			Card lastThrownCard = null;
+			if(thrown.size()>0)
+				lastThrownCard = thrown.get(thrown.size()-1);
+			Card choosenCard = currentHand.makeMove(lastThrownCard);
+			if(currentHand.cards.isEmpty())
+				winner = handIndex;
+			if(lastThrownCard!=null){
+				if(choosenCard.getNumInt()==lastThrownCard.getNumInt()){
+					System.out.println("BURN! YOU GO AGAIN.");
+					isBurn=true;
+					deck.transferCards(thrown);
+					thrown.clear();
+				}
+				else{
+					thrown.add(choosenCard);
+				}
+			}
+			else{
+				thrown.add(choosenCard);
+			}
+			if(!isBurn){
+				handIndex++;
+				if(handIndex>=hands.size())
+					handIndex = 0;
+			}
+			showThrown();
+		}
+	}
+	
+	
 }
 

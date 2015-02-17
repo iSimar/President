@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 
@@ -39,5 +41,10 @@ public class Deck {
 	      cards.set(index, cards.get(i));
 	      cards.set(i, a);
 	    }
+	}
+	
+	public void transferCards(ArrayList<Card> thrown){
+		for(Card c: thrown)
+			this.cards.add(c);
 	}
 }

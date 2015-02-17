@@ -6,15 +6,39 @@ public class Card {
 		this.num = num;
 		this.suit = suit;
 	}
+	
 	public String toString(){
-		return this.suit+this.num;
-//		System.out.println(" ___");
-//		System.out.println("| "+suit+" |");
-//		if(num.length()>1)
-//			System.out.println("|"+num+" |");
-//		else
-//			System.out.println("| "+num+" |");
-//		System.out.println(" \u00af\u00af\u00af");
+		return suit+num;
+	}
+	
+	public String getNum(){
+		return num;
 		
 	}
+	
+	public int getNumInt(){
+		if(num.equals("A")){
+			return 14;
+		}
+		else if(num.equals("2")){
+			return 15;
+		}
+		else if(num.equals("J")){
+			return 11;
+		}
+		else if(num.equals("Q")){
+			return 12;
+		}
+		else if(num.equals("K")){
+			return 13;
+		}
+		else{
+			return Integer.parseInt(num);
+		}
+	}
+	
+	public boolean isSmallerThan(Card card){
+		return this.getNumInt() < card.getNumInt();
+	}
+	
 }
