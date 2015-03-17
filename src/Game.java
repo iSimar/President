@@ -14,6 +14,7 @@ public class Game {
 	Hand player = new Hand(false, "Simar");
 	int winner = -1;
 	ArrayList<Card> thrown= new ArrayList<Card>();
+	int currentHandIndex = -1;
 	
 	public Game(){
 		System.out.println("Press Enter to deal the cards and start");
@@ -34,7 +35,8 @@ public class Game {
 //	    		player.askToMove();
 //	    		deck.printAll();
 	    		Random rnd = new Random();
-	    		start(rnd.nextInt(hands.size()));
+	    		currentHandIndex = rnd.nextInt(hands.size());
+	    		start(); // start with a random hand
 	    	    break;
 	    	}
 	    	else
@@ -79,39 +81,42 @@ public class Game {
 		System.out.println();
 	}
 	
-	public void start(int startingHand){
+	public void start(){
 		showThrown();
-		int handIndex = startingHand;
 		while(winner==-1){
-			boolean isBurn = false;
-			Hand currentHand = hands.get(handIndex);
-			Card lastThrownCard = null;
-			if(thrown.size()>0)
-				lastThrownCard = thrown.get(thrown.size()-1);
-			Card choosenCard = currentHand.makeMove(lastThrownCard);
-			if(currentHand.cards.isEmpty())
-				winner = handIndex;
-			if(lastThrownCard!=null){
-				if(choosenCard.getNumInt()==lastThrownCard.getNumInt()){
-					System.out.println("BURN! YOU GO AGAIN.");
-					isBurn=true;
-					deck.transferCards(thrown);
-					thrown.clear();
-				}
-				else{
-					thrown.add(choosenCard);
-				}
+			currentHandRoutine();
+		}
+	}
+	
+	public void currentHandRoutine(){
+		boolean isBurn = false;
+		Hand currentHand = hands.get(currentHandIndex);
+		Card lastThrownCard = null;
+		if(thrown.size()>0)
+			lastThrownCard = thrown.get(thrown.size()-1);
+		Card choosenCard = currentHand.makeMove(lastThrownCard);
+		if(currentHand.cards.isEmpty())
+			winner = currentHandIndex;
+		if(lastThrownCard!=null){
+			if(choosenCard.getNumInt()==lastThrownCard.getNumInt()){
+				System.out.println("BURN! YOU GO AGAIN.");
+				isBurn=true;
+				deck.transferCards(thrown);
+				thrown.clear();
 			}
 			else{
 				thrown.add(choosenCard);
 			}
-			if(!isBurn){
-				handIndex++;
-				if(handIndex>=hands.size())
-					handIndex = 0;
-			}
-			showThrown();
 		}
+		else{
+			thrown.add(choosenCard);
+		}
+		if(!isBurn){
+			currentHandIndex++;
+			if(currentHandIndex>=hands.size())
+				currentHandIndex = 0;
+		}
+		showThrown();
 	}
 	
 	
